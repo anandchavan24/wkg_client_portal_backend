@@ -1,0 +1,34 @@
+{
+  "name": "wkg_client_portal_backend",
+  "version": "1.0.0",
+  "description": "WKG client portal",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anandchavan24/wkg_client_portal_backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
+    "http-status": "^1.5.3",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.4",
+    "mongoose": "^6.6.4",
+    "mssql": "^9.0.1",
+    "mysql2": "^2.3.3",
+    "nodemon": "^2.0.20",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-ui-express": "^4.5.0"
+  },
+  "bugs": {
+    "url": "https://github.com/anandchavan24/wkg_client_portal_backend/issues"
+  },
+  "homepage": "https://github.com/anandchavan24/wkg_client_portal_backend#readme"
+}
