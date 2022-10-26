@@ -1,6 +1,12 @@
-const {login} = require('../controllers/user.controller');
-const router  = require('express').Router();
+const userController = require('../controllers/userController')
 
-router.post('/login',login);
+const express = require('express');
+const router = express.Router();
+let jwt = require('../utils/jwtAuth');
+
+router.post('/login', userController.login);
+router.post('/sendotp', userController.sendOTP);
 
 module.exports = router;
+
+

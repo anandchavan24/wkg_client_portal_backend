@@ -4,7 +4,8 @@
   "description": "WKG client portal",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -13,19 +14,20 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
+    "@types/mssql": "^8.1.1",
     "axios": "^1.1.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "http-status": "^1.5.3",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.4",
-    "mongoose": "^6.6.4",
     "mssql": "^9.0.1",
-    "mysql2": "^2.3.3",
-    "nodemon": "^2.0.20",
-    "swagger-jsdoc": "^6.2.5",
-    "swagger-ui-express": "^4.5.0"
+    "otp-generator": "^4.0.0",
+    "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   },
   "bugs": {
     "url": "https://github.com/anandchavan24/wkg_client_portal_backend/issues"
