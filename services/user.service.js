@@ -11,14 +11,12 @@ const { EMAIL_OBJECT } = require('../config/constant')
 
 exports.login = async ({ email, password }, response) => {
     const userDetails = await getUserDetailFromDB(email);
-    console.log(userDetails);
     const Table = (userDetails.userType == USER_TYPE.OWNER) ? TABLES.OWNER : TABLES.ADVICER;
     if (userDetails) {
         if (userDetails.IsLocked) {
             if (compareTime({ timeStamp: userDetails.LockedTimeStamp, duration: DURATION_TO_LOCK_USER })) {
                 if (await callUpdateQueryForLock(email, false, null, 0, Table)) {
                     const userDetails = await getUserDetailFromDB(email);
-                    console.log("after", userDetails)
                     checkPasswordAndLockCondition(userDetails, email, password, response, Table);
                 }
                 else {
@@ -26,7 +24,7 @@ exports.login = async ({ email, password }, response) => {
                 }
             }
             else {
-                response(null, null, 422, ERROR_MESSAGES.UserIsLocked);
+                response(null, null, 704, ERROR_MESSAGES.UserIsLocked);
             }
         }
         else {
@@ -35,7 +33,7 @@ exports.login = async ({ email, password }, response) => {
     }
     else {
         logger.error(ERROR_MESSAGES.UserDetailsNotExists)
-        response(null, null, 701, ERROR_MESSAGES.UserDetailsNotExists);
+        response(null, null, 404, ERROR_MESSAGES.UserDetailsNotExists);
     }
 }
 
@@ -45,9 +43,9 @@ function compareTime({ timeStamp, duration }) {
 
 
 async function checkPasswordAndLockCondition(userDetails, email, password, response, Table) {
-    console.log("\n--User Details", userDetails, email, password, response, Table, "=---\n")
     if (userDetails.Pwd == password) {
         if (await callUpdateQueryForLock(email, false, null, 0, Table)) {
+            console.log(userDetails)
             const authToken = jwt.getToken({ email, password })
             const responseobject = {
                 FirstName: userDetails.FirstName,
@@ -62,7 +60,6 @@ async function checkPasswordAndLockCondition(userDetails, email, password, respo
     }
     else {
         const reachedToMaxLimit = ((userDetails.InvalidAttemptCount < MAX_INVALID_ATTEMPT - 1) ? ({ status: false, email: email, IsLocked: false, LockedTimeStamp: null, InvalidAttemptCount: userDetails.InvalidAttemptCount + 1 }) : ({ status: true, email: email, IsLocked: true, LockedTimeStamp: moment().toDate(), InvalidAttemptCount: userDetails.InvalidAttemptCount + 1 }));
-        console.log("reach", reachedToMaxLimit);
         try {
             if (await callUpdateQueryForLock(reachedToMaxLimit.email, reachedToMaxLimit.IsLocked, reachedToMaxLimit.LockedTimeStamp, ((reachedToMaxLimit.status) ? MAX_INVALID_ATTEMPT : reachedToMaxLimit.InvalidAttemptCount), Table)) {
                 const responseobject = (!reachedToMaxLimit.status) ? ({
@@ -70,7 +67,8 @@ async function checkPasswordAndLockCondition(userDetails, email, password, respo
                     totalInvalidAttemptCount: MAX_INVALID_ATTEMPT
                 }) : null
                 const dynamicErrorMessage = (!reachedToMaxLimit.status) ? ERROR_MESSAGES.InvalidParam : ERROR_MESSAGES.UserIsLocked;
-                response(null, responseobject, 700, dynamicErrorMessage);
+                const dynamicErrorCode = (!reachedToMaxLimit.status) ? 702 : 704;
+                response(null, responseobject, dynamicErrorCode, dynamicErrorMessage);
             }
             else {
                 response(null, null, 701, ERROR_MESSAGES.UnknownError);
@@ -95,7 +93,6 @@ exports.sendOTP = async ({ email }, response) => {
     const userDetails = await getUserDetailFromDB(email);
     if (userDetails) {
         const userDetailsInOtpTable = await User.getDetailsForOtp({ email: email })
-        console.log(userDetailsInOtpTable);
         try {
             if (userDetailsInOtpTable != null) {
                 if (!compareTime({ timeStamp: userDetailsInOtpTable.CreatedAt, duration: OTP_EXPIRE_TIME })) {

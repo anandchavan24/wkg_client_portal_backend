@@ -9,18 +9,18 @@ exports.login = (req, res) => {
 
     if (!req.body.email) {
         logger.error(ERROR_MESSAGES.EmailIsRequired);
-        (apiResponse(420, ERROR_MESSAGES.EmailIsRequired, null, null, res));
+        (apiResponse(702, ERROR_MESSAGES.EmailIsRequired, null, null, res));
         return;
     }
     if (!req.body.password) {
         logger.error(ERROR_MESSAGES.PasswordIsRequired);
-        (apiResponse(420, ERROR_MESSAGES.PasswordIsRequired, null, null, res));
+        (apiResponse(702, ERROR_MESSAGES.PasswordIsRequired, null, null, res));
         return;
     }
 
     if (!emailRegexp.test(req.body.email)) {
         logger.error(ERROR_MESSAGES.ValidEmail);
-        (apiResponse(420, ERROR_MESSAGES.ValidEmail, null, null, res));
+        (apiResponse(702, ERROR_MESSAGES.ValidEmail, null, null, res));
         return;
     }
 
