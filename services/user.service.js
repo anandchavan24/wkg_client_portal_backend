@@ -134,7 +134,7 @@ exports.sendOTP = async ({ email }, response) => {
 }
 
 function generateOTP() {
-    return otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, specialChars: false, digits: true });
+    return otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false, digits: true });
 }
 
 function sendEmail({ email, OTP }) {

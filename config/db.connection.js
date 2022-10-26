@@ -17,8 +17,6 @@ const config = {
     },
 }
 
-console.log(config)
-
 const poolPromise = new sqlms.ConnectionPool(config)
     .connect()
     .then(pool => {
