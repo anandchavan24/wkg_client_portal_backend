@@ -1,5 +1,5 @@
-const logger = require("../config/logger");
-var dbValues = require('../config/db.config');
+const logger = require("./logger");
+var dbValues = require('./db.config');
 const sqlms = require('mssql');
 
 const { DATABASE, SERVER, PASSWORD, USER, OPTIONS } = dbValues;

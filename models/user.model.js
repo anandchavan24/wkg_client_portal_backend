@@ -1,6 +1,6 @@
 const logger = require("../config/logger");
 const User = function (user) { }
-const { poolPromise } = require('../models/index')
+const { poolPromise } = require('../config/db.connection')
 const sqlms = require('mssql');
 const moment = require('moment')
 
