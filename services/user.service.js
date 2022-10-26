@@ -11,11 +11,14 @@ const { EMAIL_OBJECT } = require('../config/constant')
 
 exports.login = async ({ email, password }, response) => {
     const userDetails = await getUserDetailFromDB(email);
+    console.log(userDetails);
     const Table = (userDetails.userType == USER_TYPE.OWNER) ? TABLES.OWNER : TABLES.ADVICER;
     if (userDetails) {
         if (userDetails.IsLocked) {
-            if (compareTime({ timeStamp: userDetails.LockedTimeStamp, checkTime: DURATION_TO_LOCK_USER })) {
+            if (compareTime({ timeStamp: userDetails.LockedTimeStamp, duration: DURATION_TO_LOCK_USER })) {
                 if (await callUpdateQueryForLock(email, false, null, 0, Table)) {
+                    const userDetails = await getUserDetailFromDB(email);
+                    console.log("after", userDetails)
                     checkPasswordAndLockCondition(userDetails, email, password, response, Table);
                 }
                 else {
@@ -36,12 +39,13 @@ exports.login = async ({ email, password }, response) => {
     }
 }
 
-function compareTime(timeStamp, duration) {
-    return moment(moment(timeStamp).add(duration, 'minutes')).isSameOrBefore(moment())
+function compareTime({ timeStamp, duration }) {
+    return moment(moment(timeStamp).add(duration, 'm').format('YYYY-MM-DD HH:mm:ss')).isSameOrBefore(moment().format('YYYY-MM-DD HH:mm:ss'))
 }
 
 
 async function checkPasswordAndLockCondition(userDetails, email, password, response, Table) {
+    console.log("\n--User Details", userDetails, email, password, response, Table, "=---\n")
     if (userDetails.Pwd == password) {
         if (await callUpdateQueryForLock(email, false, null, 0, Table)) {
             const authToken = jwt.getToken({ email, password })
@@ -58,6 +62,7 @@ async function checkPasswordAndLockCondition(userDetails, email, password, respo
     }
     else {
         const reachedToMaxLimit = ((userDetails.InvalidAttemptCount < MAX_INVALID_ATTEMPT - 1) ? ({ status: false, email: email, IsLocked: false, LockedTimeStamp: null, InvalidAttemptCount: userDetails.InvalidAttemptCount + 1 }) : ({ status: true, email: email, IsLocked: true, LockedTimeStamp: moment().toDate(), InvalidAttemptCount: userDetails.InvalidAttemptCount + 1 }));
+        console.log("reach", reachedToMaxLimit);
         try {
             if (await callUpdateQueryForLock(reachedToMaxLimit.email, reachedToMaxLimit.IsLocked, reachedToMaxLimit.LockedTimeStamp, ((reachedToMaxLimit.status) ? MAX_INVALID_ATTEMPT : reachedToMaxLimit.InvalidAttemptCount), Table)) {
                 const responseobject = (!reachedToMaxLimit.status) ? ({
@@ -89,17 +94,17 @@ async function callUpdateQueryForLock(email, IsLocked, LockedTimeStamp, InvalidA
 exports.sendOTP = async ({ email }, response) => {
     const userDetails = await getUserDetailFromDB(email);
     if (userDetails) {
-        const Table = (userDetails.userType == USER_TYPE.OWNER) ? TABLES.OWNER : TABLES.ADVICER;
-        const userDetailsInOtpTable = await User.getDetailsForOtp({ email: email, Table: Table })
+        const userDetailsInOtpTable = await User.getDetailsForOtp({ email: email })
+        console.log(userDetailsInOtpTable);
         try {
             if (userDetailsInOtpTable != null) {
-                if (compareTime({ timeStamp: userDetailsInOtpTable.CreatedAt, checkTime: OTP_EXPIRE_TIME })) {
+                if (!compareTime({ timeStamp: userDetailsInOtpTable.CreatedAt, duration: OTP_EXPIRE_TIME })) {
                     sendEmail({ email: email, OTP: userDetailsInOtpTable.OTP });
                     response(null, null, 200, ERROR_MESSAGES.OTPsent);
                 }
                 else {
                     const newOTP = generateOTP();
-                    if (await User.updateOTP({ Email_Mobile: email, OTP: newOTP, CreatedAt: new Date() })) {
+                    if (await User.updateOTP({ Email_Mobile: email, OTP: newOTP, CreatedAt: moment().toDate() })) {
                         sendEmail({ email: email, OTP: newOTP })
                         response(null, null, 200, ERROR_MESSAGES.OTPsent);
                     }
@@ -110,7 +115,7 @@ exports.sendOTP = async ({ email }, response) => {
             }
             else {
                 const newOTP = generateOTP();
-                if (await User.addDetailsIntoOtp({ Email_Mobile: email, OTP: newOTP, CreatedAt: new Date() })) {
+                if (await User.addDetailsIntoOtp({ Email_Mobile: email, OTP: newOTP, CreatedAt: moment().toDate() })) {
                     sendEmail({ email: email, OTP: newOTP })
                     response(null, null, 200, ERROR_MESSAGES.OTPsent);
                 }
