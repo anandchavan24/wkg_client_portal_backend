@@ -24,21 +24,23 @@ exports.login = (req, res) => {
         return;
     }
 
-    userService.login({email:req.body.email,password:req.body.password}, (err, data, statusCode, message) => {
-        if(err){
+    userService.login({ email: req.body.email, password: req.body.password }, (err, data, statusCode, message) => {
+        if (err) {
             logger.error({
                 statusCode: statusCode,
                 message: message,
                 data: data
             });
-            (apiResponse(statusCode, message, data, null, res));        
+            (apiResponse(statusCode, message, data, null, res));
         }
-        else{
+        else {
             res.header('Access-Control-Allow-Origin', '*');
             res.header('Access-Control-Allow-Methods', '*');
-            if (data && data.authToken)
-                res.header('authorization', data.authToken);
-            (apiResponse(statusCode, message, data, null, res));        
+            if (data && data.authToken) {
+                res.header('Authorization', data.authToken);
+                delete data.authToken
+            }
+            (apiResponse(statusCode, message, data, null, res));
         }
     })
 }
@@ -50,19 +52,19 @@ exports.sendOTP = (req, res) => {
         (apiResponse(420, ERROR_MESSAGES.EmailIsRequired, null, null, res));
         return;
     }
-    userService.sendOTP({email:req.body.email}, (err, data, statusCode, message) => {
-        if(err){
+    userService.sendOTP({ email: req.body.email }, (err, data, statusCode, message) => {
+        if (err) {
             logger.error({
                 statusCode: statusCode,
                 message: message,
                 data: data
             });
-            (apiResponse(statusCode, message, data, null, res));        
+            (apiResponse(statusCode, message, data, null, res));
         }
-        else{
+        else {
             res.header('Access-Control-Allow-Origin', '*');
             res.header('Access-Control-Allow-Methods', '*');
-            (apiResponse(statusCode, message, data, null, res));        
+            (apiResponse(statusCode, message, data, null, res));
         }
     })
 }

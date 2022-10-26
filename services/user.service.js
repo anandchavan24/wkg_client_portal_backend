@@ -50,7 +50,9 @@ async function checkPasswordAndLockCondition(userDetails, email, password, respo
             const responseobject = {
                 FirstName: userDetails.FirstName,
                 LastName: userDetails.LastName,
-                authToken: authToken
+                userId:userDetails.userId,
+                userType:userDetails.userType,
+                authToken: authToken,
             }
             response(null, responseobject, 200, ERROR_MESSAGES.OK);
         }
