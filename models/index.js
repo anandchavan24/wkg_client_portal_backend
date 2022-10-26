@@ -2,21 +2,22 @@ const logger = require("../config/logger");
 var dbValues = require('../config/db.config');
 const sqlms = require('mssql');
 
-const { DATABASE, SERVER, PASSWORD, USER, PORT } = dbValues;
+const { DATABASE, SERVER, PASSWORD, USER, OPTIONS } = dbValues;
 
 const config = {
     user: USER,
     password: PASSWORD,
     database: DATABASE,
     server: SERVER,
-    port: PORT,
     options: {
-        trustedConnection: true,
-        encrypt: true,
-        enableArithAbort: true,
-        trustServerCertificate: true,
+        trustedConnection: OPTIONS.TRUSTED_CONNECTION,
+        encrypt: OPTIONS.ENCRYPT,
+        enableArithAbort: OPTIONS.ENABLEARITHABORT,
+        trustServerCertificate: OPTIONS.TRUST_SERVER_CERTIFICATE,
     },
 }
+
+console.log(config)
 
 const poolPromise = new sqlms.ConnectionPool(config)
     .connect()

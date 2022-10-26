@@ -32,7 +32,7 @@ const sqlms = require('mssql');
 
 
 const config = {
-    user: 'sa',
+            user: 'sa',
             password: 'Compass2022$$',
             server: '192.168.21.97',
             database: 'Compass',
@@ -41,7 +41,6 @@ const config = {
                 encrypt: true,
                 enableArithAbort: true,
                 trustServerCertificate: true,
-            
               }
 }
 
