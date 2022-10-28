@@ -63,6 +63,17 @@ let jwt = require('../utils/jwtAuth');
  *     type: string
  *     description: email of the user
  *     example: 'daniel@demo.com'
+ *  reset-password:
+ *   type: object
+ *   properties:
+ *    email:
+ *     type: string
+ *     description: email of the user
+ *     example: 'daniel@demo.com'
+ *    newPassword:
+ *     type: string
+ *     description: OTP
+ *     example: 123456
  */
 
 
@@ -70,8 +81,8 @@ let jwt = require('../utils/jwtAuth');
  * @swagger
  * /login:
  *  post:
- *   summary: login user
- *   description: login user
+ *   summary: Login User
+ *   description: Login user
  *   requestBody:
  *    content:
  *     application/json:
@@ -91,8 +102,8 @@ router.post('/login', userController.login);
  * @swagger
  * /sendotp:
  *  post:
- *   summary: send otp
- *   description: login user
+ *   summary: Send OTP
+ *   description: Send otp
  *   requestBody:
  *    content:
  *     application/json:
@@ -112,8 +123,8 @@ router.post('/sendotp', userController.sendOTP);
  * @swagger
  * /verifyotp:
  *  post:
- *   summary: verify otp
- *   description: verify otp
+ *   summary: Verify OTP
+ *   description: Verify OTP
  *   requestBody:
  *    content:
  *     application/json:
@@ -133,8 +144,8 @@ router.post('/verifyotp', userController.verifyOTP);
  * @swagger
  * /unlock-user:
  *  post:
- *   summary: unlock user
- *   description: unlock user
+ *   summary: Unlock user
+ *   description: Unlock User
  *   requestBody:
  *    content:
  *     application/json:
@@ -159,7 +170,7 @@ router.post('/unlock-user', userController.unlockUser);
  *    content:
  *     application/json:
  *      schema:
- *       $ref: '#/definitions/unlock-user'
+ *       $ref: '#/definitions/reset-password'
  *   responses:
  *    200:
  *     description: password reset successfully
