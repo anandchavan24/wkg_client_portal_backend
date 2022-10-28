@@ -30,6 +30,8 @@ const RESPONSE_MESSAGES = {
     UnlockUser:"User unlock successfully",
     userIsNotLocked:"User is not locked",
     PasswordResetSucessfully:"Password Reset Sucessfully",
+    PasswordChangeSucessfully:"Password Change Sucessfully",
+    passwordNotMatched:"Old password does not matched"
 }
 
 const RESPONSE_CODE = {
@@ -43,7 +45,8 @@ const RESPONSE_CODE = {
     OTPExpire:706,
     UnknownError : 707,
     UserDetailsNotExists:708,
-    userIsNotLocked:709
+    userIsNotLocked:709,
+    passwordNotMatched:801
 }
 
 const EMAIL_OBJECT = {

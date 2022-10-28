@@ -139,4 +139,24 @@ User.resetPassword = async ({ email, tableToModify, passwordToReset }) => {
     }
 }
 
+User.changePassword = async ({ email, tableToModify, newPassword }) => {
+    try {
+        const pool = await poolPromise;
+        const result = await pool.request()
+            .input('newPassword', sqlms.VarChar(30), newPassword)
+            .input('email', sqlms.VarChar(30), email)
+            .query("Update " + tableToModify + " SET WebAccessPassword = @newPassword  where WebAccessCode = @email");
+        if (result && result.rowsAffected && result.rowsAffected.length > 0 && result.rowsAffected[0] > 0) {
+            return true
+        }
+        else {
+            return false;
+        }
+    }
+    catch (err) {
+        console.log(err)
+        return (err.message, null)
+    }
+}
+
 module.exports = User;

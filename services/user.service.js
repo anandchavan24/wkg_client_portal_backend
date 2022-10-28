@@ -202,3 +202,25 @@ exports.resetPassword = async ({ email,passwordToReset }, response) => {
     }
 }
 
+exports.changePassword = async ({ email,newPassword,oldPassword }, response) => {
+    const userDetails = await getUserDetailFromDB(email);
+    if (userDetails) {
+        if(userDetails.Pwd == oldPassword){
+            const tableToModify = (userDetails.userType == USER_TYPE.OWNER) ? TABLES.OWNER : TABLES.ADVICER;
+            if (await User.changePassword({ email: email, tableToModify: tableToModify,newPassword:newPassword})) {
+                response(null, null, RESPONSE_CODE.OK, RESPONSE_MESSAGES.PasswordChangeSucessfully);
+            }
+            else {
+                response(null, null, RESPONSE_CODE.UnknownError, RESPONSE_MESSAGES.UnknownError);
+            }
+        }
+        else{
+            response(null, null, RESPONSE_CODE.passwordNotMatched, RESPONSE_MESSAGES.passwordNotMatched);
+        }
+    }
+    else {
+        logger.error(RESPONSE_MESSAGES.UserDetailsNotExists)
+        response(null, null, RESPONSE_CODE.UserDetailsNotExists, RESPONSE_MESSAGES.UserDetailsNotExists);
+    }
+}
+

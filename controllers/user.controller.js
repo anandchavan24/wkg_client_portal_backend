@@ -170,3 +170,42 @@ exports.resetPassword = (req, res) => {
 }
 
 
+exports.changePassword = (req, res) => {
+    if (!req.body.newPassword) {
+        logger.error(RESPONSE_MESSAGES.NullRequest);
+        (apiResponse(RESPONSE_CODE.NullRequest, RESPONSE_MESSAGES.PasswordIsRequired, null, null, res));
+        return;
+    }
+    if (!req.body.oldPassword) {
+        logger.error(RESPONSE_MESSAGES.NullRequest);
+        (apiResponse(RESPONSE_CODE.NullRequest, RESPONSE_MESSAGES.PasswordIsRequired, null, null, res));
+        return;
+    }
+    if (!req.body.email) {
+        logger.error(RESPONSE_MESSAGES.EmailIsRequired);
+        (apiResponse(RESPONSE_CODE.NullRequest, RESPONSE_MESSAGES.EmailIsRequired, null, null, res));
+        return;
+    }
+    if (!emailRegexp.test(req.body.email)) {
+        logger.error(RESPONSE_MESSAGES.InValidEmail);
+        (apiResponse(RESPONSE_CODE.InValidEmail, RESPONSE_MESSAGES.InValidEmail, null, null, res));
+        return;
+    }
+    userService.changePassword({ email: req.body.email, newPassword: req.body.newPassword, oldPassword: req.body.oldPassword }, (err, data, statusCode, message) => {
+        if (err) {
+            logger.error({
+                statusCode: statusCode,
+                message: message,
+                data: data
+            });
+            (apiResponse(statusCode, message, data, null, res));
+        }
+        else {
+            res.header('Access-Control-Allow-Origin', '*');
+            res.header('Access-Control-Allow-Methods', '*');
+            (apiResponse(statusCode, message, data, null, res));
+        }
+    })
+}
+
+

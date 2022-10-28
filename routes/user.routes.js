@@ -72,7 +72,22 @@ let jwt = require('../utils/jwtAuth');
  *     example: 'daniel@demo.com'
  *    newPassword:
  *     type: string
- *     description: OTP
+ *     description: password
+ *     example: 123456
+ *  change-password:
+ *   type: object
+ *   properties:
+ *    email:
+ *     type: string
+ *     description: email of the user
+ *     example: 'daniel@demo.com'
+ *    newPassword:
+ *     type: string
+ *     description: passowrd
+ *     example: 123456
+ *    oldpassword:
+ *     type: string
+ *     description: password
  *     example: 123456
  */
 
@@ -178,7 +193,28 @@ router.post('/unlock-user', userController.unlockUser);
  *     description: something went wrong
  */
 
- router.post('/reset-password', userController.resetPassword);
+router.post('/reset-password', userController.resetPassword);
+
+
+/**
+* @swagger
+* /change-password:
+*  post:
+*   summary: Change password
+*   description: This api will change the user password 
+*   requestBody:
+*    content:
+*     application/json:
+*      schema:
+*       $ref: '#/definitions/change-password'
+*   responses:
+*    200:
+*     description: password change successfully
+*    500:
+*     description: something went wrong
+*/
+
+router.post('/change-password', userController.changePassword);
 
 
 module.exports = router;
