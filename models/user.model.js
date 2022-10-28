@@ -100,4 +100,43 @@ User.addDetailsIntoOtp = async ({ Email_Mobile, OTP, CreatedAt }) => {
     }
 }
 
+User.unlockUser = async ({ Email_Mobile, tableToModify }) => {
+    try {
+        const pool = await poolPromise;
+        const result = await pool.request()
+            .input('Email_Mobile', sqlms.VarChar(30), Email_Mobile)
+            .query("Update " + tableToModify + " SET LockedTimeStamp = null,IsLocked = 0 ,InvalidAttemptCount = 0  where WebAccessCode = @Email_Mobile");
+        if (result && result.rowsAffected && result.rowsAffected.length > 0 && result.rowsAffected[0] > 0) {
+            return true
+        }
+        else {
+            return false;
+        }
+    }
+    catch (err) {
+        console.log(err)
+        return (err.message, null)
+    }
+}
+
+User.resetPassword = async ({ email, tableToModify, passwordToReset }) => {
+    try {
+        const pool = await poolPromise;
+        const result = await pool.request()
+            .input('passwordToReset', sqlms.VarChar(30), passwordToReset)
+            .input('email', sqlms.VarChar(30), email)
+            .query("Update " + tableToModify + " SET WebAccessPassword = @passwordToReset  where WebAccessCode = @email");
+        if (result && result.rowsAffected && result.rowsAffected.length > 0 && result.rowsAffected[0] > 0) {
+            return true
+        }
+        else {
+            return false;
+        }
+    }
+    catch (err) {
+        console.log(err)
+        return (err.message, null)
+    }
+}
+
 module.exports = User;

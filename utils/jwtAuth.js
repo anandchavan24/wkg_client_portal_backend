@@ -7,11 +7,13 @@ exports.getToken = (userData) => {
 }
 
 exports.verifyToken = (req, res, next) => {
-    var authToken = req.rawHeaders[1]
     try{
+        authToken = req.header('authorization').substring(7, req.header('authorization').length);
+        console.log(authToken)
         var decoded = jwt.verify(authToken, privateKey);
     }
     catch(err){
+        console.log(err)
         res.status(401).send({
             statusCode:401,
             message: "Invalid Token"
